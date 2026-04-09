@@ -8,6 +8,7 @@ edition = "2021"
 
 [dependencies]
 dioxus = { version = "0.7.1", features = [] }
+dioxus-logger = "0.7.4"
 
 [features]
 default = ["web"]
