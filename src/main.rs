@@ -24,23 +24,21 @@ fn Title() -> Element {
 
 #[component]
 fn DogView() -> Element {
-    let mut img_src = use_signal(|| "".to_string());
-    // 改用 use_signal(|| "") 会导致生命周期问题
-    
-    let skip = move |_| info!("Skipped!");
-    let save = move |_| async move {
+    let skip = |_| info!("Skipped!");
+    let save = || async {
         let response = reqwest::get("https://dog.ceo/api/breeds/image/random").await.unwrap();
         let text = response.text().await.unwrap();
         let dogApi: DogApi = serde_json::from_str(&text).unwrap();
-        img_src.set(dogApi.message);
+        dogApi.message
     };
+    let mut img_src = use_resource(save);
     rsx! {
         div { id: "dogview",
             img { src: {img_src} }
         }
         div { id: "buttons",
             button { onclick: skip, id: "skip", "skip" }
-            button { onclick: save, id: "save", "save!" }
+            button { onclick: move |_| img_src.restart(), id: "save", "save!" }
         }
     }
 }
