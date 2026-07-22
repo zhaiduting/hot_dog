@@ -1,4 +1,5 @@
 use dioxus::prelude::*;
+mod guide_backend;
 const MAIN_CSS: Asset = asset!("/assets/main.css");
 fn main() {
     dioxus::launch(App);
@@ -34,11 +35,15 @@ fn DogView() -> Element {
     let mut img_src = use_resource(save);
     rsx! {
         div { id: "dogview",
-            img { src: {img_src} }
+            img { src: img_src }
         }
         div { id: "buttons",
             button { onclick: skip, id: "skip", "skip" }
-            button { onclick: move |_| img_src.restart(), id: "save", "save!" }
+            button { onclick: move |_| async move{
+                let current=img_src.clone().unwrap();
+                img_src.restart();
+                _=guide_backend::save_dog(current).await;
+            }, id: "save", "save!" }
         }
     }
 }
