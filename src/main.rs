@@ -1,6 +1,9 @@
 use dioxus::prelude::*;
 mod backend;
 mod components;
+pub mod route;
+
+use components::*;
 const MAIN_CSS: Asset = asset!("/assets/main.css");
 fn main() {
     launch(App);
@@ -11,7 +14,7 @@ fn App() -> Element {
     rsx! {
         document::Link { rel: "stylesheet", href: MAIN_CSS }
         Title {}
-        components::DogView {}
+        Router::<route::Route>{}
     }
 }
 
